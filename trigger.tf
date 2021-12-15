@@ -5,6 +5,12 @@ resource "oci_devops_trigger" "test_trigger" {
     project_id     = oci_devops_project.test_project.id
     repository_id  = oci_devops_repository.test_repository.id
     trigger_source = var.trigger_trigger_source
+    depends_on = [oci_devops_build_pipeline_stage.test_build_pipeline_stage,
+    oci_devops_build_pipeline_stage.test_deliver_artifact_stage,
+    oci_devops_build_pipeline_stage.test_deliver_artifact_stage2,
+    oci_devops_build_pipeline_stage.test_deploy_stage,
+    oci_devops_deploy_pipeline.test_deploy_pipeline
+    ]
 
     actions {
         build_pipeline_id = oci_devops_build_pipeline.test_build_pipeline.id
