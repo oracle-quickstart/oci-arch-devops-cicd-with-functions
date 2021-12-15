@@ -1,304 +1,426 @@
-# title: "Use OCI DevOps CICD with Functions"
-# description: "Create Function and DevOps Deploy service to manage your Functions deployments."
-# schemaVersion: 0.0.0
-# version: "20211123"
-# locale: "en"
+title: "Use OCI DevOps CICD with Functions"
+description: "Create Function and DevOps Deploy service to manage your Functions deployments."
+schemaVersion: 1.1.0
+version: "20190304"
+locale: "en"
 
-# #################
-# # Variable Groups
-# #################
+##################
+#Variable Groups
+##################
 
-# variableGroups:
-# - title: General Configuration
-#   visible: false
-#   variables:
-#   - tenancy_ocid
-#   - region
-#   - user_ocid
-#   - fingerprint
-#   - private_key_path
-#   - network_cidrs
-#   - app_version
-#   - app_version2
-#   - deploy_pipeline_deploy_pipeline_parameters_items_default_value
-#   - deploy_pipeline_deploy_pipeline_parameters_items_description
-#   - deploy_pipeline_deploy_pipeline_parameters_items_name
-#   - compartment_ocid
-#   - release
+variableGroups:
+- title: General Configuration
+  visible: false
+  variables:
+  - tenancy_ocid
+  - region
+  - user_ocid
+  - fingerprint
+  - private_key_path
+  - network_cidrs
+  - app_version
+  - app_version2
+  - deploy_pipeline_deploy_pipeline_parameters_items_default_value
+  - deploy_pipeline_deploy_pipeline_parameters_items_description
+  - deploy_pipeline_deploy_pipeline_parameters_items_name
+  - build_pipeline_stage_build_pipeline_stage_predecessor_collection_items_id
+  - build_pipeline_stage_build_pipeline_stage_type
+  - build_pipeline_stage_wait_criteria_wait_duration
+  - build_pipeline_stage_wait_criteria_wait_type
+  - build_pipeline_stage_build_source_collection_items_branch
+  - build_pipeline_stage_build_source_collection_items_connection_type
+  - build_pipeline_stage_deliver_artifact_stage_type
+  - deploy_artifact_argument_substitution_mode
+  - deploy_artifact_deploy_artifact_source_deploy_artifact_source_type
+  - deploy_artifact_deploy_artifact_type
+  - build_pipeline_stage_deploy_stage_type
+  - build_pipeline_stage_is_pass_all_parameters_enabled
+  - trigger_actions_type
+  - trigger_trigger_source
+  - trigger_trigger_input_event_type
+  - trigger_state
+  - trigger_source_repo_branch
+  - trigger_action_to_invoke
+  - deploy_stage_deploy_stage_type
+  - compartment_ocid
+  - environment_type
+  - release
 
-# - title: Required Configuration
-#   visible: true  
-#   variables:
-#   - app_name
-#   - ocir_user_name
-#   - ocir_user_password
-#   - execute_deployment
-#   - show_advanced
+- title: Required Configuration
+  visible: true  
+  variables:
+  - app_name
+  - oci_user_name
+  - oci_user_authtoken
+  - execute_deployment
+  - show_advanced
 
-# - title: DevOps Project
-#   visible: true  
-#   variables:
-#   - compartment_id
-#   - project_description
-#   - project_logging_config_is_archiving_enabled
-#   - project_logging_config_display_name_prefix
-#   - project_logging_config_retention_period_in_days
+- title: Network Configuration 
+  visible: true  
+  variables:
+  - VCN-CIDR
+  - fnsubnet-CIDR
 
-# - title: Function & Network Configuration 
-#   visible: true  
-#   variables:
-#   - VCN-CIDR
-#   - fnsubnet-CIDR
-#   - ocir_repo_name
+- title: DevOps Project
+  visible: true  
+  variables:
+  - compartment_id
+  - project_logging_config_retention_period_in_days
 
-# - title: DevOps Environments
-#   visible: 
-#       and:
-#         - show_advanced
-#   variables:
-#   - environment_type 
+- title: Git and OCI DevOps Repositories
+  visible: true  
+  variables:
+  - repository_name
+  - repository_repository_type
+  - repository_default_branch
+  - repository_description
+  - git_repo
+  - git_repo_name
 
-# - title: DevOps Artifacts
-#   visible: 
-#       and:
-#         - show_advanced
-#   variables:
-#   - deploy_artifact_source_type
-#   - deploy_artifact_type
-#   - argument_substitution_mode
+- title: DevOps Build Pipeline 
+  visible: true  
+  variables:
+  - deploy_stage_display_name
+  - build_pipeline_description
+  - build_pipeline_build_stage_description
+  - build_pipeline_display_name
+  - build_pipeline_stage_display_name
+  - build_pipeline_stage_build_spec_file
+  - build_pipeline_stage_image
+  - build_pipeline_stage_stage_execution_timeout_in_seconds
+  - build_pipeline_stage_build_source_collection_items_name
+  - build_pipeline_stage_deliver_artifact_collection_items_artifact_name_default
+  - build_pipeline_stage_deliver_artifact_collection_items_artifact_name_custom
 
-# - title: Pipelines & Stages
-#   visible: 
-#       and:
-#         - show_advanced  
-#   variables:
-#   - deploy_stage_deploy_stage_type
-#   - deploy_stage_namespace
+- title: DevOps Artifacts
+  visible: 
+    and:
+      - show_advanced
+  variables:
+  - container_repository_is_public
+  - deliver_artifact_stage_display_name
 
-# - title: Policy Settings
-#   description: Policy setting for the stack deployment
-#   visible: true  
-#   variables:
-#   - create_dynamic_group_for_devops_pipln_in_compartment
-#   - create_dynamic_group_for_nodes_in_compartment
-#   - existent_dynamic_group_for_nodes_in_compartment
-#   - create_compartment_policies
-#   - create_tenancy_policies
+- title: DevOps Deploy Pipelines 
+  visible: 
+    and:
+      - show_advanced  
+  variables:
+  - deploy_pipeline_description
+  - deploy_stage_namespace
+
+- title: Policy Settings
+  description: Policy setting for the stack deployment
+  visible: true  
+  variables:
+  - create_dynamic_group_for_devops_pipln_in_compartment
+  - create_dynamic_group_for_nodes_in_compartment
+  - existent_dynamic_group_for_nodes_in_compartment
+  - create_compartment_policies
+  - create_tenancy_policies
     
 
-# ######################
-# # Variable Definitions
-# ######################
+#######################
+#Variable Definitions
+#######################
 
-# variables:
+variables:
 
-#   compartment_id: 
-#     type: oci:identity:compartment:id
-#     title: "Compartment"
-#     description: "The compartment in which to create resources"
-#     required: true
+  compartment_id: 
+    type: oci:identity:compartment:id
+    title: "Compartment"
+    description: "The compartment in which to create resources"
+    required: true
 
-#   app_name:
-#     type: string
-#     title: "HelloWorldFn"
-#     required: true
+  oci_user_name:
+    type: string
+    required: true
+    visibile: true
+    title: "OCI username"
+    description: "For a federated user (single sign-on with an identity provider), enter the username in the following format: TenancyName/Federation/UserName. For example, if you use OCI's identity provider, your login would be, Acme/oracleidentitycloudservice/alice.jones@acme.com. If you are using OCI's direct sign-in, enter the username in the following format: TenancyName/YourUserName. For example, Acme/alice_jones. Your password is the auth token you created previously."
 
-#   show_advanced:
-#     type: boolean
-#     title: "Show advanced options?"
-#     description: "Shows advanced options, allowing enable customer-managed encryption keys, select your ssh key, select/unselect cluster utilities, do not create policies, and other advanced options"
-#     visible: true
-#     default: false
+  oci_user_authtoken:
+    type: password
+    required: true
+    visibile: true
+    title: "OCI user password"
+    description: "You can get the auth token from your Profile menu -> click User Settings -> On left side  click *Auth Tokens -> Generate Token"
+ 
+  app_name:
+    type: string
+    title: "HelloWorldFn"
+    required: true
 
-#   execute_deployment:
-#     type: boolean
-#     title: "Execute deployment in DevOps Pipeline?"
-#     description: "Choose if you want to start deployment in DevOps Pipeline as a part of this Terraform automation."
-#     visible: true
-#     default: false
+  show_advanced:
+    type: boolean
+    title: "Show advanced options?"
+    description: "Shows advanced options, allowing enable customer-managed encryption keys, select your ssh key, select/unselect cluster utilities, do not create policies, and other advanced options"
+    visible: true
+    default: false
 
-# ## Function
+  execute_deployment:
+    type: boolean
+    title: "Execute deployment in DevOps Pipeline?"
+    description: "Choose if you want to start deployment in DevOps Pipeline as a part of this Terraform automation."
+    visible: true
+    default: false
 
-#   VCN-CIDR:
-#     type: string
-#     required: false
-#     default: "10.0.0.0/16"
-#     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
-#     description: "VCN CIDR block where you want to create the App/Function resources."
+################
+# Repositories
+###############
+
+  repository_name:
+    type: string
+    default: "python-function-helloworld"
+    required: false
+    title: "OCI DevOps Repository Name."
+    description: "OCI DevOps Repository Name, which will be used for git clone of your GitHub repo will be stored for bulid process"
+
+  repository_repository_type: 
+    type: enum
+    enum:
+      - "HOSTED"
+    title: "OCI DevOps Repository Type"
+    description: "OCI DevOps Repository Type (currently HOSTED is the only accepted value)."
+    default: "HOSTED"
+
+  repository_default_branch:
+    type: string
+    default: "main"
+    required: false
+    title: "OCI DevOps Repository Default Branch."
+    description: "OCI DevOps Repository Default Branch."
+
+  repository_description:
+    type: string
+    default: "Sample code for OCI Function with python"
+    required: false
+    title: "OCI DevOps Repository description"
+    description: "OCI DevOps Repository description."    
+
+  git_repo:
+    type: string
+    default: "https://github.com/RahulMR42/oci-sample-function-with-python"
+    required: false
+    title: "GitHub repository URL"
+    description: "GitHub repository URL with the source of the code to be build and deployed." 
+
+  git_repo_name:
+    type: string
+    default: "oci-sample-function-with-python"
+    required: false
+    title: "GitHub repository name"
+    description: "GitHub repository name with the source of the code to be build and deployed."
   
-#   fnsubnet-CIDR:
-#     type: string
-#     required: false
-#     default: "10.0.1.0/24"
-#     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
-#     description: "Subnet CIDR block where you want to create the App/Function resources."
+
+###############
+# DevOps Build 
+###############
+
+  deploy_stage_display_name:
+    type: string
+    default: "Invoke-Deployment"
+    required: false
+    title: "Deploy Stage Display Name"
+    description: "Deploy Stage Display Name in the Build Pipeline."  
+
+  build_pipeline_description:
+    type: string
+    default: "Build pipeline for OCI Function with Python"
+    required: false
+    title: "Build Pipeline Description"
+    description: "Build Pipeline Description."     
+
+  build_pipeline_build_stage_description:
+    type: string
+    default: "Build Stage for OCI Function with python"
+    required: false
+    title: "Build Stage of Build Pipeline - Description"
+    description: "Build Stage of Build Pipeline - Description."    
+
+  build_pipeline_display_name:
+    type: string
+    default: "Function-Python-Buildpipeline"
+    required: false
+    title: "Build Pipeline Display Name"
+    description: "Build Pipeline Display Name."
+
+  build_pipeline_stage_display_name:
+    type: string
+    default: "function-python-build"
+    required: false
+    title: "Build Stage of Build Pipeline - Display Name"
+    description: "Build Stage of Build Pipeline - Display Name."    
+
+  build_pipeline_stage_build_spec_file:
+    type: string
+    default: ""
+    required: false
+    title: "Build Stage of Build Pipeline - Spec File"
+    description: "Build Stage of Build Pipeline -Spec File."        
+
+  build_pipeline_stage_image:
+    type: enum
+    enum:
+      - "OL7_X86_64_STANDARD_10"
+    title: "Build Stage of Build Pipeline - Image"
+    description: "Build Stage of Build Pipeline - Image (currently OL7_X86_64_STANDARD_10 is the only accepted value)."
+    default: "OL7_X86_64_STANDARD_10"
+
+  build_pipeline_stage_stage_execution_timeout_in_seconds:
+    type: number
+    title: "Build Stage of Build Pipeline - Stage Execution Timeout (in seconds)"
+    description: "Build Stage of Build Pipeline - Stage Execution Timeout (in seconds)."
+    minimum: 1
+    maximum: 120000
+    multipleOf: 1
+    default: 36000
+
+  build_pipeline_stage_build_source_collection_items_name:
+    type: string
+    default: "oci-sample-function-with-python"
+    required: false
+    title: "Build Stage of Build Source Collection Items Name"
+    description: "Build Stage of Build Source Collection Items Name." 
   
-#   ocir_repo_name:
-#     type: string
-#     required: true
-#     visibile: true
-#     title: "OCIR repository name"
-#     description: "Oracle Cloud Infrastructure Registry repository name (for example functions)"
+  build_pipeline_stage_deliver_artifact_collection_items_artifact_name_default:
+    type: string
+    default: "output_fn_default_image"
+    required: false
+    title: "Deliver Artifact Stage of Build - Collection Items Name Default"
+    description: "Deliver Artifact Stage of Build - Collection Items Name Default."     
+
+  build_pipeline_stage_deliver_artifact_collection_items_artifact_name_custom:
+    type: string
+    default: "output_fn_custom_image"
+    required: false
+    title: "Deliver Artifact Stage of Build - Collection Items Name Custom"
+    description: "Deliver Artifact Stage of Build - Collection Items Name Custom."     
+
+##########
+# Network
+#########
+
+  VCN-CIDR:
+    type: string
+    required: false
+    default: "10.0.0.0/16"
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    description: "VCN CIDR block where you want to create the App/Function resources."
   
-#   ocir_user_name:
-#     type: string
-#     required: true
-#     visibile: true
-#     title: "OCIR username"
-#     description: "Oracle Cloud Infrastructure Registry username (your OCI username)" 
+  fnsubnet-CIDR:
+    type: string
+    required: false
+    default: "10.0.1.0/24"
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    description: "Subnet CIDR block where you want to create the App/Function resources."
 
-#   ocir_user_password:
-#     type: password
-#     required: true
-#     visibile: true
-#     title: "OCIR user password"
-#     description: "Oracle Cloud Infrastructure Registry user password (your OCI user authtoken)" 
+#############
+# DevOps Project
+#############
 
-
-# ## DevOps
-
-#   project_description:
-#     type: string
-#     title: "Project description"
-#     description: "Choose DevOps Project description"
-#     default: "DevOps Project for Function deployment"
-#     required: false    
-
-#   project_logging_config_is_archiving_enabled:
-#     type: boolean
-#     title: "Archiving enabled for Project Logging"
-#     description: "Archiving enabled for Project Logging"
-#     default: false
-#     required: true
-#     visible: 
-#       and:
-#         - show_advanced
-
-#   project_logging_config_display_name_prefix:
-#     type: string
-#     title: "Prefix for Logging Config"
-#     description: "Prefix for Logging Config"
-#     default: "fn-"
-#     required: true
-#     visible: 
-#       and:
-#         - show_advanced
-
-#   project_logging_config_retention_period_in_days:
-#     type: number
-#     title: "Project Logs retention period"
-#     description: "Days to retain logs from the Project."
-#     minimum: 1
-#     maximum: 128
-#     multipleOf: 1
-#     default: 30
-#     required: true
-#     visible: 
-#       and:
-#         - show_advanced
+  project_logging_config_retention_period_in_days:
+    type: number
+    title: "Project Logs retention period"
+    description: "Days to retain logs from the Project."
+    minimum: 1
+    maximum: 128
+    multipleOf: 1
+    default: 30
+    required: true
+    visible: 
+      and:
+        - show_advanced
   
-#   #############
-#   # Environment
-#   ############# 
 
-#   environment_type:
-#     type: enum
-#     enum:
-#       - "FUNCTION"
-#     title: "Environment Type"
-#     description: "The type of environment to target. Stack currently supports only FUNCTION"
-#     default: "FUNCTION"
-#     visible: 
-#       and:
-#         - show_advanced
+#############
+# DevOps Artifacts
+#############
 
-#   ############
-#   # Artifacts
-#   ############
-#   deploy_artifact_source_type:
-#     type: enum
-#     enum:
-#       - "OCIR"
-#     title: "Artifact Source Type"
-#     description: "The source type of artifact. Stack currently supports only OCIR"
-#     default: "OCIR"
+  container_repository_is_public:
+    type: boolean
+    title: "Is the container repository public?"
+    description: "Check if the container repository should be public."
+    visible: true
+    default: true  
 
-#   deploy_artifact_type:
-#     type: enum
-#     enum:
-#       - "DOCKER_IMAGE"
-#     title: "Artifact Type"
-#     description: "The type of Artifact. Stack currently supports only DOCKER_IMAGE"
-#     default: "DOCKER_IMAGE"
+  deliver_artifact_stage_display_name:
+    type: string
+    default: "Deliver-Artifact-Stage"
+    required: false
+    title: "Deliver Artifact Stage Display Name"
+    description: "Deliver Artifact Stage Display Name."   
 
-#   argument_substitution_mode:
-#     type: enum
-#     enum:
-#       - "NONE"
-#     title: "Argument substitution for the Artifact"
-#     description: "Artifacts can have arguments that are substituted with values are runtime. Stack currently supports only NONE"
-#     default: "NONE"
+##################
+# Deploy Pipeline
+##################
+
+  deploy_pipeline_description:
+    type: string
+    default: "Deploy-Function-Pipeline"
+    required: false
+    title: "Deploy Pipeline Description"
+    description: "Deploy Pipeline Description."     
+
+############
+#Pipeline
+############
+
+  create_dynamic_group_for_devops_pipln_in_compartment:
+    type: boolean
+    title: "Create a Dynamic Group for DevOps Pipelines"
+    description: "You need to be an administrator to do this. Alternatively you can have the administrator create Dynamic group for you." 
+    default: true
+
+  deploy_stage_deploy_stage_type:
+    type: enum
+    enum:
+      - "DEPLOY_FUNCTION"
+    title: "Stage Type"
+    description: "DevOps Stage Type"
+    default: "DEPLOY_FUNCTION"
+
+  deploy_stage_namespace:
+    type: string
+    title: "Namespace to use"
+    description: "namespace to use for deployment."
+    default: "default"
   
-#   ###########
-#   # Pipeline
-#   ###########
-#   create_dynamic_group_for_devops_pipln_in_compartment:
-#     type: boolean
-#     title: "Create a Dynamic Group for DevOps Pipelines"
-#     description: "You need to be an administrator to do this. Alternatively you can have the administrator create Dynamic group for you." 
-#     default: true
+  create_dynamic_group_for_nodes_in_compartment:
+    type: boolean
+    title: "Create Dynamic Group for Worker Nodes in the Compartment"
+    required: true
+    visible:
+      and:
+        - show_advanced
 
-#   deploy_stage_deploy_stage_type:
-#     type: enum
-#     enum:
-#       - "DEPLOY_FUNCTION"
-#     title: "Stage Type"
-#     description: "DevOps Stage Type"
-#     default: "DEPLOY_FUNCTION"
-
-#   deploy_stage_namespace:
-#     type: string
-#     title: "Namespace to use"
-#     description: "namespace to use for deployment."
-#     default: "default"
-  
-#   create_dynamic_group_for_nodes_in_compartment:
-#     type: boolean
-#     title: "Create Dynamic Group for Worker Nodes in the Compartment"
-#     required: true
-#     visible:
-#       and:
-#         - show_advanced
-
-#   existent_dynamic_group_for_nodes_in_compartment:
-#     type: string
-#     required: true
-#     title: "Existent Dynamic Group"
-#     visible:
-#       and:
-#         - and:
-#           - show_advanced
-#         - or:
-#           - create_compartment_policies
-#           - create_tenancy_policies
-#         - not:
-#           - create_dynamic_group_for_nodes_in_compartment
+  existent_dynamic_group_for_nodes_in_compartment:
+    type: string
+    required: true
+    title: "Existent Dynamic Group"
+    visible:
+      and:
+        - and:
+          - show_advanced
+        - or:
+          - create_compartment_policies
+          - create_tenancy_policies
+        - not:
+          - create_dynamic_group_for_nodes_in_compartment
         
-#   create_compartment_policies:
-#     type: boolean
-#     title: "Create Compartment Policies"
-#     required: true
-#     visible:
-#       and:
-#         - show_advanced
+  create_compartment_policies:
+    type: boolean
+    title: "Create Compartment Policies"
+    required: true
+    visible:
+      and:
+        - show_advanced
 
-#   create_tenancy_policies:
-#     type: boolean
-#     title: "Create Tenancy Policies"
-#     required: true
-#     visible:
-#       and:
-#         - show_advanced
-  
-  
+  create_tenancy_policies:
+    type: boolean
+    title: "Create Tenancy Policies"
+    required: true
+    visible:
+      and:
+        - show_advanced
+
  

@@ -28,25 +28,25 @@ resource "oci_logging_log" "test_log" {
 }
 
 resource "oci_logging_log" "test_log1" {
-    defined_tags       = {"${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release}
-    display_name       = "${var.app_name}_${random_string.deploy_id.result}_fnInvokeLog"
-    freeform_tags      = {}
-    log_group_id       = oci_logging_log_group.test_log_group.id
-    log_type           = "SERVICE"
-    retention_duration = var.project_logging_config_retention_period_in_days
-    
-    configuration {
-        compartment_id = var.compartment_ocid
+  defined_tags       = { "${oci_identity_tag_namespace.ArchitectureCenterTagNamespace.name}.${oci_identity_tag.ArchitectureCenterTag.name}" = var.release }
+  display_name       = "${var.app_name}_${random_string.deploy_id.result}_fnInvokeLog"
+  freeform_tags      = {}
+  log_group_id       = oci_logging_log_group.test_log_group.id
+  log_type           = "SERVICE"
+  retention_duration = var.project_logging_config_retention_period_in_days
 
-        source {
-            category    = "invoke"
-            resource    = oci_functions_application.test_fn_app.id
-            service     = "functions"
-            source_type = "OCISERVICE"
-        }
+  configuration {
+    compartment_id = var.compartment_ocid
+
+    source {
+      category    = "invoke"
+      resource    = oci_functions_application.test_fn_app.id
+      service     = "functions"
+      source_type = "OCISERVICE"
     }
+  }
 
-    timeouts {}
+  timeouts {}
 }
 
 
