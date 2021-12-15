@@ -9,7 +9,8 @@ resource "oci_devops_trigger" "test_trigger" {
     oci_devops_build_pipeline_stage.test_deliver_artifact_stage,
     oci_devops_build_pipeline_stage.test_deliver_artifact_stage2,
     oci_devops_build_pipeline_stage.test_deploy_stage,
-    oci_devops_deploy_pipeline.test_deploy_pipeline
+    oci_devops_deploy_pipeline.test_deploy_pipeline,
+    oci_devops_build_run.test_build_run_1
     ]
 
     actions {
