@@ -2,9 +2,9 @@
 ## All rights reserved. The Universal Permissive License (UPL), Version 1.0 as shown at http://oss.oracle.com/licenses/upl
 
 variable "tenancy_ocid" {}
-variable "user_ocid" {}
-variable "fingerprint" {}
-variable "private_key_path" {}
+#variable "user_ocid" {}
+#variable "fingerprint" {}
+#variable "private_key_path" {}
 variable "compartment_ocid" {}
 variable "region" {}
 
@@ -45,10 +45,6 @@ variable "fnsubnet-CIDR" {
   default = "10.0.1.0/24"
 }
 
-variable "ocir_repo_name" {
-  default = "functions"
-}
-
 variable "oci_user_name" {
   #sensitive = true
   default = ""
@@ -83,37 +79,12 @@ variable "create_tenancy_policies" {
   default = true
 }
 
-
-variable "project_description" {
-  default = "DevOps Project for Function deployment"
-}
 variable "environment_type" {
   default = "FUNCTION"
 }
 
-variable "project_logging_config_display_name_prefix" {
-  default = "fn-"
-}
-
-variable "project_logging_config_is_archiving_enabled" {
-  default = false
-}
-
 variable "project_logging_config_retention_period_in_days" {
   default = 30
-}
-
-
-variable "deploy_artifact_source_type" {
-  default = "OCIR"
-}
-
-variable "deploy_artifact_type" {
-  default = "DOCKER_IMAGE"
-}
-
-variable "argument_substitution_mode" {
-  default = "NONE"
 }
 
 variable "create_dynamic_group_for_devops_pipln_in_compartment" {
