@@ -15,7 +15,7 @@ variable "app_name" {
 
 variable "release" {
   description = "Reference Architecture Release (OCI Architecture Center)"
-  default     = "1.11"
+  default     = "1.0"
 }
 
 variable "execute_deployment" {
@@ -50,13 +50,13 @@ variable "ocir_repo_name" {
 }
 
 variable "oci_user_name" {
-  sensitive = true
-  default   = ""
+  #sensitive = true
+  default = ""
 }
 
 variable "oci_user_authtoken" {
-  sensitive = true
-  default   = ""
+  #sensitive = true
+  default = ""
 }
 
 # OCIR repo name & namespace
@@ -130,7 +130,7 @@ variable "deploy_stage_namespace" {
 
 
 variable "repository_name" {
-  default ="python-function-helloworld"
+  default = "python-function-helloworld"
 }
 
 variable "repository_default_branch" {
@@ -171,7 +171,7 @@ variable "build_pipeline_stage_display_name" {
 
 variable "build_pipeline_stage_build_spec_file" {
   default = ""
-} 
+}
 
 variable "build_pipeline_stage_build_pipeline_stage_predecessor_collection_items_id" {
   default = "id"
@@ -259,24 +259,24 @@ variable "build_pipeline_stage_is_pass_all_parameters_enabled" {
   default = true
 }
 
-variable "trigger_actions_type"{
+variable "trigger_actions_type" {
   default = "TRIGGER_BUILD_PIPELINE"
 }
 
-variable "trigger_state"{
-  default="ACTIVE"
+variable "trigger_state" {
+  default = "ACTIVE"
 }
-variable "trigger_trigger_source"{
-  default="DEVOPS_CODE_REPOSITORY"
+variable "trigger_trigger_source" {
+  default = "DEVOPS_CODE_REPOSITORY"
 }
-variable "trigger_trigger_input_event_type"{
-  default="PUSH"
+variable "trigger_trigger_input_event_type" {
+  default = "PUSH"
 }
 
-variable "trigger_source_repo_branch"{
+variable "trigger_source_repo_branch" {
   default = "main"
 }
 
-variable "trigger_action_to_invoke"{
-  default="TRIGGER_BUILD_PIPELINE"
+variable "trigger_action_to_invoke" {
+  default = "TRIGGER_BUILD_PIPELINE"
 }
