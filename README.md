@@ -34,6 +34,15 @@ and [setup guide](https://www.terraform.io/docs/providers/oci/guides/version-3-u
 
 7. If no further changes are necessary, return to the Stack Details page, click **Terraform Actions**, and select **Apply**. 
 
+### Validate the execution 
+
+As this a function the validation to be done via logs . Use OCI Logs for function execution and watch for logs like below .
+
+```
+"Invoked function with default  image" and 
+"Invoked function with custom image" 
+```
+
 ## Deploy Using the Terraform CLI
 
 ### Clone the Module
@@ -78,6 +87,16 @@ Deploy:
     terraform init
     terraform plan
     terraform apply
+
+
+### Validate the execution 
+
+As this a function the validation to be done via logs . Use OCI Logs for function execution and watch for logs like below .
+
+```
+"Invoked function with default  image" and 
+"Invoked function with custom image" 
+```
 
 ## Destroy the Deployment
 When you no longer need the deployment, you can run this command to destroy it:
